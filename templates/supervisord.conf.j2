@@ -9,7 +9,12 @@
 [{{ section_label }}:{{ section.name }}]
 {% for option, value in section.items() %}
 {% if option != 'name' %}
+{% if option == 'environment' and value is iterable and value is not string %}
+{{ option }} ={% for k,v in value.iteritems() %}{{ k }}="{{v}}", {% endfor %} 
+
+{% else %}
 {{ option }} = {{ value }}
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endfor %}
