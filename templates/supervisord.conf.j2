@@ -20,8 +20,16 @@
 {% endfor %}
 {% endmacro %}
 
+{% if supervisor_http_server_enabled %}
 [inet_http_server]
-port = 127.0.0.1:9001
+port = {{ supervisor_http_server_port }}
+{% if supervisor_http_server_username is defined %}
+{{ supervisor_http_server_username }}
+{% endif %}
+{% if supervisor_http_server_password is defined %}
+{{ supervisor_http_server_password }}
+{% endif %}
+{% endif %}
 
 [unix_http_server]
 file=/var/run/supervisor.sock
