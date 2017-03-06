@@ -4,6 +4,18 @@
   apt: pkg=python-pip
   when: ansible_os_family == 'Debian'
 
+- name: Check if supervisor is running
+  command: ps aux | grep supervisor | grep -v grep
+  ignore_errors: yes
+  changed_when: false
+  register: service_supervisor_status
+
+- name: Stop all running supervisor managed processes
+  command: "supervisorctl stop all"
+  become: true
+  become_user: root
+  when: service_supervisor_status.rc != 1
+  
 - name: Install supervisor
   pip: name=supervisor version={{ supervisor_version }}
   notify:
