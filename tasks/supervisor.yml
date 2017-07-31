@@ -43,9 +43,26 @@
   template: src=supervisor_debian.conf.j2 dest=/etc/init.d/supervisor owner=root group=root mode=0755
   when: ansible_distribution == 'Debian'
 
+- name: Configure supervisor (RedHat) - pt. 2
+  template: src=redhat_supervisord.service.j2 dest=/lib/systemd/system/supervisord.service group=root mode=0755
+  when: ansible_os_family == 'RedHat'
+
 - name: Enable supervisor service (Debian) - pt. 3
   service: name=supervisor enabled=yes
   when: ansible_distribution == 'Debian'
 
-- name: Ensure the supervisor is started
+- name: Enable supervisor service (RedHat) - pt. 3
+  command: systemctl enable supervisord.service
+  become: true
+  become_user: root
+  when: ansible_os_family == 'RedHat'
+
+- name: Ensure the supervisor is started - pt. 4
   service: name=supervisor state=started
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Ensure the supervisor is started - pt. 4
+  command: systemctl start supervisord.service
+  become: true
+  become_user: root
+  when: ansible_os_family == 'RedHat'
