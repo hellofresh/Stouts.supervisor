@@ -2,3 +2,10 @@
 
 - name: supervisor restart
   service: name=supervisor state=restarted
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: supervisor restart
+  command: systemctl restart supervisord.service
+  become: true
+  become_user: root
+  when: ansible_os_family == 'RedHat'
